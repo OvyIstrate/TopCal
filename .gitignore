@@ -1,0 +1,8 @@
+*.lock
+.vs\
+/bin
+/obj
+/.vs
+/TopCalAPI/bin/Debug/netcoreapp2.2
+/TopCalAPI/obj
+/TopCalAPI/Properties
