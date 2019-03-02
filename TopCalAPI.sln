@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopCalAPI", "TopCalAPI\TopCalAPI.csproj", "{4246A869-7A65-404F-813E-53E5E2EBF745}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopCal.Data", "TopCal.Data\TopCal.Data.csproj", "{9277C989-D6E7-46A3-AC80-05AE7532C98C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopCal.Test", "TopCal.Test\TopCal.Test.csproj", "{843C84B0-A5DC-4E87-B29C-2EDB6C42CB6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{4246A869-7A65-404F-813E-53E5E2EBF745}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4246A869-7A65-404F-813E-53E5E2EBF745}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4246A869-7A65-404F-813E-53E5E2EBF745}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9277C989-D6E7-46A3-AC80-05AE7532C98C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9277C989-D6E7-46A3-AC80-05AE7532C98C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9277C989-D6E7-46A3-AC80-05AE7532C98C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9277C989-D6E7-46A3-AC80-05AE7532C98C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{843C84B0-A5DC-4E87-B29C-2EDB6C42CB6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{843C84B0-A5DC-4E87-B29C-2EDB6C42CB6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{843C84B0-A5DC-4E87-B29C-2EDB6C42CB6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{843C84B0-A5DC-4E87-B29C-2EDB6C42CB6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

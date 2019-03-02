@@ -6,3 +6,7 @@
 /TopCalAPI/bin/Debug/netcoreapp2.2
 /TopCalAPI/obj
 /TopCalAPI/Properties
+/TopCal.Data/bin/Debug/netcoreapp2.2
+/TopCal.Data/obj
+/TopCal.Test/obj
+/TopCal.Test/bin/Debug/netcoreapp2.2
