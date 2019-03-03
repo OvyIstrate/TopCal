@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TopCal.Data;
 
 namespace TopCalAPI
 {
@@ -31,6 +32,9 @@ namespace TopCalAPI
                 options.UseSqlServer(connectionStrings,
                     sql => sql.MigrationsAssembly(efAssembly));
             });
+
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionStrings,
+                sql => sql.MigrationsAssembly(efAssembly)));
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => { })
                 .AddEntityFrameworkStores<IdentityDbContext>()
