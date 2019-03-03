@@ -12,6 +12,7 @@ namespace TopCal.Data.Model
         [Column(TypeName = "char(36)")]
         public Guid Id { get; set; }
 
+        [Key]
         [Required]
         [Column(TypeName = "char(36)")]
         public string UserId { get; set; }

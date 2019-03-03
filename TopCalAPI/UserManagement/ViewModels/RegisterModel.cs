@@ -1,10 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TopCalAPI.UserManagement.Model
+namespace TopCalAPI.UserManagement.ViewModels
 {
     public class RegisterModel
     {
+        [Required]
         public string UserName { get; set; }
+
+        [Required]
+        public string Email { get; set; }
 
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -12,6 +16,7 @@ namespace TopCalAPI.UserManagement.Model
         [Compare("Password")]
         [DataType(DataType.Password)]
         public string  ConfirmPassword { get; set; }
+
 
     }
 }
