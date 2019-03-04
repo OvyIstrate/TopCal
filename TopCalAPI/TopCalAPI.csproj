@@ -18,9 +18,4 @@
     <ProjectReference Include="..\TopCal.Data\TopCal.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UserManagement\Claims\" />
-    <Folder Include="UserManagement\Stores\" />
-  </ItemGroup>
-
 </Project>

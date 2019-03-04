@@ -1,21 +1,35 @@
 ﻿using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using TopCal.Data;
+using TopCal.Data.Entities;
+using TopCal.Data.Identity;
+using TopCal.Data.Repository;
+using TopCal.Data.Seed;
+using TopCalAPI.Config;
 
 namespace TopCalAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger<Startup> _logger;
+
+        public Startup(IConfiguration configuration,
+                       ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -24,30 +38,38 @@ namespace TopCalAPI
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionStrings = Configuration.GetConnectionString("TopCalDb");
-
             var efAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddDbContext<IdentityDbContext>(options =>
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(connectionStrings,
                     sql => sql.MigrationsAssembly(efAssembly));
             });
 
-            services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionStrings,
-                sql => sql.MigrationsAssembly(efAssembly)));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options => { })
-                .AddEntityFrameworkStores<IdentityDbContext>()
-                .AddDefaultTokenProviders();
+            //Register Dependencies
+            services.AddScoped<IRepository, Repository>();
+            services.AddTransient<ApplicationDbInitializer>();
+            services.AddTransient<ApplicationIdentityInitializer>();
 
-            services.AddAuthentication("cookies").AddCookie("cookies", options => options.LoginPath = "api/user/login");
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            ConfigureUnauthorizedRedirect(services);
+            ConfigureAuthenticationAndAuthorization(services);
+           
 
+            AddCors(services);
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app,
+                              IHostingEnvironment env,
+                              ApplicationDbInitializer dbInitializer,
+                              ApplicationIdentityInitializer identityInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -55,12 +77,74 @@ namespace TopCalAPI
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            dbInitializer.Seed().Wait();
+            identityInitializer.Seed().Wait();
+        }
+
+        private void ConfigureAuthenticationAndAuthorization(IServiceCollection services)
+        {
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.IncludeErrorDetails = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = Configuration["AppSettings:Token:Issuer"],
+                    ValidAudience = Configuration["AppSettings:Token:Audience"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Token:Key"])),
+                    ValidateLifetime = true
+                };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddPolicy("SuperUsers", p => p.RequireClaim("Admin", "True"));
+                options.AddPolicy("ManagerUsers", p => p.RequireClaim("Manager", "True"));
+
+            });
+        }
+
+        private void AddCors(IServiceCollection services)
+        {
+            services.AddCors(cfg =>
+                cfg.AddPolicy("LocalClient",
+                    pol => pol.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200")));
+        }
+
+        private void ConfigureUnauthorizedRedirect(IServiceCollection services)
+        {
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Events = new CookieAuthenticationEvents
+                {
+                    OnRedirectToLogin = ctx =>
+                    {
+                        ctx.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToAccessDenied = ctx =>
+                    {
+                        ctx.Response.StatusCode = 401;
+                        return Task.CompletedTask;
+                    }
+                };
+            });
         }
     }
 }

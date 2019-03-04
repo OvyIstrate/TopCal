@@ -9,16 +9,18 @@ namespace TopCal.Data.Model
     {
         [Key]
         [Required]
+        [MaxLength(36)]
         [Column(TypeName = "char(36)")]
         public Guid Id { get; set; }
 
-        [Key]
         [Required]
+        [ForeignKey("UserId")]
+        [MaxLength(36)]
         [Column(TypeName = "char(36)")]
         public string UserId { get; set; }
 
         [Required]
-        [StringLength(500)]
+        [MaxLength(500)]
         [Column(TypeName = "varchar(500)")]
         public string Description { get; set; }
 
