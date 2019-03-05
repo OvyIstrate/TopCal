@@ -23,9 +23,6 @@ namespace TopCal.Data.Identity
             await SeedRole("Manager");
             await SeedRole("Regular");
 
-
-            var user = await _userManager.FindByNameAsync("admin");
-
             // Add Users
             await SeedUser("admin", "Admin");
             await SeedUser("managerUser", "Manager");

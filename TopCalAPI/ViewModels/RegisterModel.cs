@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TopCalAPI.UserManagement.ViewModels
+namespace TopCalAPI.ViewModels
 {
     public class RegisterModel
     {
@@ -13,16 +13,15 @@ namespace TopCalAPI.UserManagement.ViewModels
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Compare("Password")]
-        [DataType(DataType.Password)]
-        public string  ConfirmPassword { get; set; }
-
         [Required]
         public string FirstName { get; set; }
 
         [Required]
-        public string LastName  { get; set; }
+        public string LastName { get; set; }
 
+        [Compare("Password")]
+        [DataType(DataType.Password)]
+        public string  ConfirmPassword { get; set; }
 
     }
 }

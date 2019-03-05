@@ -114,9 +114,17 @@ namespace TopCalAPI
                     .RequireAuthenticatedUser()
                     .Build();
 
-                options.AddPolicy("SuperUsers", p => p.RequireClaim("Admin", "True"));
-                options.AddPolicy("ManagerUsers", p => p.RequireClaim("Manager", "True"));
+                options.AddPolicy("UserManagers", p =>
+                    {
+                        p.RequireAssertion(context =>
+                            context.User.HasClaim(c => c.Type == "Admin" || c.Type == "Manager"));
+                    });
 
+                options.AddPolicy("MealManagers", p =>
+                    {
+                        p.RequireAssertion(context =>
+                            context.User.HasClaim(c => c.Type == "Admin" || c.Type == "Regular"));
+                    });
             });
         }
 

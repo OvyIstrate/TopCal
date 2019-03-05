@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TopCalAPI.UserManagement.ViewModels
+namespace TopCalAPI.ViewModels
 {
     public class LoginModel
     {
