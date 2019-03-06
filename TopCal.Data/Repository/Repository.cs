@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace TopCal.Data.Repository
 {
@@ -11,9 +12,19 @@ namespace TopCal.Data.Repository
             _context = context;
         }
 
+        public IQueryable<T> GetAll<T>() where T : class
+        {
+            return _context.Set<T>().AsQueryable();
+        }
+
         public void Add<T>(T entity) where T : class
         {
             _context.Set<T>().Add(entity);
+        }
+
+        public void Update<T>(T entity) where T : class
+        {
+            _context.Set<T>().Attach(entity);
         }
 
         public void Delete<T>(T entity) where T : class
@@ -25,5 +36,6 @@ namespace TopCal.Data.Repository
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
     }
 }

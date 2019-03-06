@@ -31,6 +31,6 @@ namespace TopCal.Data.Model
         public DateTime Date { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Time => Date.ToShortTimeString();
+        public TimeSpan Time { get; set; }
     }
 }
