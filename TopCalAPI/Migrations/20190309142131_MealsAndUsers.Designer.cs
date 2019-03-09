@@ -10,8 +10,8 @@ using TopCal.Data;
 namespace TopCalAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190306234020_Update_MealAndUser_Entities")]
-    partial class Update_MealAndUser_Entities
+    [Migration("20190309142131_MealsAndUsers")]
+    partial class MealsAndUsers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -194,15 +194,13 @@ namespace TopCalAPI.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("TopCal.Data.Model.Meal", b =>
+            modelBuilder.Entity("TopCal.Data.Entities.Meal", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 36)))
                         .HasColumnType("char(36)")
                         .HasMaxLength(36);
-
-                    b.Property<string>("ApplicationUserId");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
@@ -215,19 +213,16 @@ namespace TopCalAPI.Migrations
                     b.Property<short>("NumberOfCalories")
                         .HasColumnType("smallint");
 
-                    b.Property<string>("Time")
-                        .IsRequired()
-                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 48)))
-                        .HasColumnType("varchar(10)");
+                    b.Property<long>("Time")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("char(36)")
-                        .HasMaxLength(36);
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Meals");
                 });
@@ -277,11 +272,12 @@ namespace TopCalAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("TopCal.Data.Model.Meal", b =>
+            modelBuilder.Entity("TopCal.Data.Entities.Meal", b =>
                 {
-                    b.HasOne("TopCal.Data.Entities.ApplicationUser")
-                        .WithMany("Meals")
-                        .HasForeignKey("ApplicationUserId");
+                    b.HasOne("TopCal.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

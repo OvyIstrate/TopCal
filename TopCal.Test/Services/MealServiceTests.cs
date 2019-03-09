@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Moq;
-using TopCal.Data.Model;
+using TopCal.Data.Entities;
 using TopCal.Data.Repository;
 using TopCalAPI.Filters;
 using TopCalAPI.Services.Implementation;

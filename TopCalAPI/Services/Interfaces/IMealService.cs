@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TopCal.Data.Model;
+using TopCal.Data.Entities;
 using TopCalAPI.ViewModels;
 
 namespace TopCalAPI.Services.Interfaces

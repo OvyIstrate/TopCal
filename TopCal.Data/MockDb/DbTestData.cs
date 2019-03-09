@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using TopCal.Data.Model;
+using TopCal.Data.Entities;
 
 namespace TopCal.Data.MockDb
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TopCal.Data.Model
+namespace TopCal.Data.Entities
 {
     [Table("Meals")]
     public class Meal
@@ -14,9 +14,7 @@ namespace TopCal.Data.Model
         public Guid Id { get; set; }
 
         [Required]
-        [ForeignKey("UserId")]
-        [MaxLength(36)]
-        [Column(TypeName = "char(36)")]
+        [Column(TypeName = "nvarchar(450)")]
         public string UserId { get; set; }
 
         [Required]
@@ -30,7 +28,11 @@ namespace TopCal.Data.Model
         [Column(TypeName = "datetime")]
         public DateTime Date { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
+        [Column(TypeName = "bigint")]
         public TimeSpan Time { get; set; }
+
+        [ForeignKey("UserId")]
+        [Obsolete("Used For FK Relations")]
+        public ApplicationUser User { get; set; }
     }
 }

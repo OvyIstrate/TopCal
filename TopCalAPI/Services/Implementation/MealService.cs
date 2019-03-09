@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TopCal.Data.Model;
+using TopCal.Data.Entities;
 using TopCal.Data.Repository;
 using TopCalAPI.Filters;
 using TopCalAPI.Services.Interfaces;
@@ -27,7 +27,9 @@ namespace TopCalAPI.Services.Implementation
         {
             var query = _repository.GetAll<Meal>().Where(x => x.UserId == userId);
 
-            return await _filter.Filter(filterModel, query).ToListAsync();
+            var result =  await _filter.Filter(filterModel, query).ToListAsync();
+
+            return result;
         }
 
         public async Task<Meal> GetMealAsync(Guid id)

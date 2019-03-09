@@ -10,14 +10,19 @@ namespace TopCalAPI.ViewModels
 
         public string Password { get; set; }
 
+        [Required]
+        [MaxLength(30)]
         public string FirstName { get; set; }
 
+        [Required]
+        [MaxLength(30)]
         public string LastName { get; set; }
 
         [EmailAddress]
         public string Email { get; set; }
 
-        public RoleEnum Role { get; set; }
-        
+        [Required]
+        public RoleEnum Role { get; set; } = RoleEnum.Regular;
+
     }
 }

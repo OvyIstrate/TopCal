@@ -2,7 +2,7 @@
 
 namespace TopCalAPI.ViewModels
 {
-    public class MealFilterModel : BaseFilterModel
+    public class MealFilterModel
     {
         public DateTime? FromDate { get; set; }
 

@@ -18,6 +18,10 @@ using TopCal.Data.Identity;
 using TopCal.Data.Repository;
 using TopCal.Data.Seed;
 using TopCalAPI.Config;
+using TopCalAPI.Filters;
+using TopCalAPI.Services.Implementation;
+using TopCalAPI.Services.Interfaces;
+using TopCalAPI.ViewModels;
 
 namespace TopCalAPI
 {
@@ -51,6 +55,9 @@ namespace TopCalAPI
 
             //Register Dependencies
             services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IMealService, MealService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddTransient<IFilter<Meal, MealFilterModel>, MealFilter>();
             services.AddTransient<ApplicationDbInitializer>();
             services.AddTransient<ApplicationIdentityInitializer>();
 
