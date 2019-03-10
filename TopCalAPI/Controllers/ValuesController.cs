@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TopCalAPI.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class ValuesController : ControllerBase
     {

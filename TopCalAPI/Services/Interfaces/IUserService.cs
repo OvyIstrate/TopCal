@@ -8,6 +8,8 @@ namespace TopCalAPI.Services.Interfaces
     {
         Task<List<UserViewModel>> GetAll(string userId);
 
+        Task<UserViewModel> Get(string userId);
+
         Task<bool> AddUser(CreateUserModel model);
 
         Task<bool> UpdateUser(UpdateUserModel model);
@@ -16,7 +18,7 @@ namespace TopCalAPI.Services.Interfaces
 
         Task<bool> Register(RegisterModel model);
 
-        Task<string> CreateToken(LoginModel model);
+        Task<LoggedUserModel> CreateToken(LoginModel model);
 
         List<string> GetErrors();
     }

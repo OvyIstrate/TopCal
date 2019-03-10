@@ -32,9 +32,9 @@ namespace TopCalAPI.Services.Implementation
             return result;
         }
 
-        public async Task<Meal> GetMealAsync(Guid id)
+        public async Task<Meal> GetMealAsync(string userId, Guid id)
         {
-            return await _repository.GetAll<Meal>().FirstOrDefaultAsync(x => x.Id == id);
+            return await _repository.GetAll<Meal>().Where(x => x.UserId == userId).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task AddMealAsync(MealCreateModel model)

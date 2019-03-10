@@ -57,6 +57,7 @@ namespace TopCalAPI
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddTransient<IFilter<Meal, MealFilterModel>, MealFilter>();
             services.AddTransient<ApplicationDbInitializer>();
             services.AddTransient<ApplicationIdentityInitializer>();

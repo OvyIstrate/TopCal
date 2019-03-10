@@ -9,7 +9,7 @@ namespace TopCalAPI.Services.Interfaces
     public interface IMealService
     {
         Task<List<Meal>> GetMealsAsync(string userId, MealFilterModel model = null);
-        Task<Meal> GetMealAsync(Guid id);
+        Task<Meal> GetMealAsync(string userId, Guid id);
         Task AddMealAsync(MealCreateModel model);
         Task UpdateMealAsync(MealUpdateModel model);
         Task DeleteMealAsync(Guid mealId);

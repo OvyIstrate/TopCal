@@ -44,7 +44,7 @@ namespace TopCalAPI.Controllers
         [Authorize(Policy = "MealManagers")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var meal = await _mealService.GetMealAsync(id);
+            var meal = await _mealService.GetMealAsync(User.Identity.Name, id);
 
             return Ok(meal);
         }

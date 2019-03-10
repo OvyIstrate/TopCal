@@ -21,6 +21,8 @@ namespace TopCalAPI.ViewModels
         [EmailAddress]
         public string Email { get; set; }
 
+        public float CaloriesTarget { get; set; }
+
         [Required]
         public RoleEnum Role { get; set; } = RoleEnum.Regular;
 

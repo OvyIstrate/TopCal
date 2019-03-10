@@ -1,20 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using TopCal.Data.Entities;
-using TopCal.Data.Repository;
-using TopCalAPI.Config;
 using TopCalAPI.Filters;
 using TopCalAPI.Services.Interfaces;
 using TopCalAPI.ViewModels;
@@ -46,6 +36,15 @@ namespace TopCalAPI.Controllers
             return Ok(users);
         }
 
+        [HttpGet("{userId}")]
+        [Authorize(Policy = "UserManagers")]
+        public async Task<ActionResult> Get(string userId)
+        {
+            var user = await _userService.Get(userId);
+
+            return Ok(user);
+        }
+
         [HttpPost("create")]
         [ValidateModel]
         [Authorize(Policy = "UserManagers")]
@@ -61,7 +60,13 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(errors.ToList());
                 }
 
-                return Ok("You've successfully created an user");
+                var response = new SuccessResponseModel
+                {
+                    Message = "You've successfully created an user",
+                    Success = true
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -85,7 +90,13 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(_userService.GetErrors());
                 }
 
-                return Ok($"You've successfully deleted the user");
+                var response = new SuccessResponseModel
+                {
+                    Message = "You've successfully deleted the user",
+                    Success = true
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -104,12 +115,17 @@ namespace TopCalAPI.Controllers
             {
                 var updateResult = await _userService.UpdateUser(model);
 
-                if (updateResult)
+                if (!updateResult)
                 {
                     return OperationFailed(_userService.GetErrors());
                 }
 
-                return Ok("You've successfully updated an user");
+                var response = new SuccessResponseModel
+                {
+                    Message = "You've successfully updated an user"
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -120,7 +136,6 @@ namespace TopCalAPI.Controllers
         }
 
         // POST: api/user
-        [ValidateModel]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -133,7 +148,13 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(_userService.GetErrors());
                 }
 
-                return Ok("You've Successfully registered!");
+                var response = new SuccessResponseModel
+                {
+                    Message = "You've Successfully registered!",
+                    Success =  true
+                };
+
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -144,15 +165,16 @@ namespace TopCalAPI.Controllers
             return BadRequest(_userService.GetErrors());
         }
 
-        [ValidateModel]
+        //[ValidateModel]
         [HttpPost("token")]
-        public async Task<IActionResult> CreateToken([FromBody] LoginModel model)
+        [ValidateModel]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             try
             {
-                var token = await _userService.CreateToken(model);
+                var result = await _userService.CreateToken(model);
 
-                return Ok(token);
+                return Ok(result);
 
             }
             catch (Exception ex)

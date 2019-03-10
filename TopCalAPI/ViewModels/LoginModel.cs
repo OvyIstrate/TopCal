@@ -10,9 +10,4 @@ namespace TopCalAPI.ViewModels
         [Required]
         public string Password { get; set; }
     }
-
-    public class LoginSuccessResponseModel
-    {
-        public string Message { get; set; }
-    }
 }

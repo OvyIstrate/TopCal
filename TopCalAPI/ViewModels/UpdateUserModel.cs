@@ -6,7 +6,7 @@ namespace TopCalAPI.ViewModels
     public class UpdateUserModel
     {
         [Required]
-        public string UserId { get; set; }
+        public string Id { get; set; }
 
         [Required]
         public string FirstName { get; set; }

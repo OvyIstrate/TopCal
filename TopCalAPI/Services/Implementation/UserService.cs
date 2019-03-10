@@ -25,18 +25,20 @@ namespace TopCalAPI.Services.Implementation
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository _repository;
         private readonly IPasswordHasher<ApplicationUser> _hasher;
+        private readonly IEmailService _emailService;
         private readonly AppSettings _appSettings;
         private readonly List<string> _errors;
 
         public UserService(UserManager<ApplicationUser> userManager,
                            IRepository repository,
                            IOptions<AppSettings> appSettings,
-                           IPasswordHasher<ApplicationUser> hasher)
+                           IPasswordHasher<ApplicationUser> hasher, IEmailService emailService)
         {
             _userManager = userManager;
             _repository = repository;
             _appSettings = appSettings.Value;
             _hasher = hasher;
+            _emailService = emailService;
             _errors = new List<string>();
         }
 
@@ -52,6 +54,7 @@ namespace TopCalAPI.Services.Implementation
 
                 result.Add(new UserViewModel
                 {
+                    Id = user.Id,
                     CaloriesTarget = user.CaloriesTarget,
                     FirstName = user.FirstName,
                     Email = user.Email,
@@ -60,6 +63,27 @@ namespace TopCalAPI.Services.Implementation
                     UserName = user.UserName
                 });
             }
+
+            return result;
+        }
+
+        public async Task<UserViewModel> Get(string userId)
+        {
+            var user = await _repository.GetAll<ApplicationUser>().FirstOrDefaultAsync(x => x.Id == userId);
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+            var result = new UserViewModel
+            {
+                Id = user.Id,
+                CaloriesTarget = user.CaloriesTarget,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                LastName = user.LastName,
+                Role = role,
+                UserName = user.UserName
+            };
 
             return result;
         }
@@ -81,8 +105,7 @@ namespace TopCalAPI.Services.Implementation
 
                 var role = GetRoleName(model.Role);
 
-                //TODO -> Manage this part.
-                model.Password = "P@ssw0rd!";
+                model.Password = PasswordHelper.GenerateRandomPassword();
 
                 var createResult = await _userManager.CreateAsync(user, model.Password);
                 var roleResult = await _userManager.AddToRoleAsync(user, role);
@@ -92,6 +115,19 @@ namespace TopCalAPI.Services.Implementation
                 {
                     _errors.AddRange(createResult.Errors.Concat(claimResult.Errors).Concat(roleResult.Errors)
                         .Select(x => x.Description).ToList());
+                }
+
+                if (createResult.Succeeded)
+                {
+                    //Send Email
+                    var mailInfo = new EmailInfo
+                    {
+                        TempPassword = model.Password,
+                        UserEmail = model.Email,
+                        Username = model.UserName
+                    };
+
+                    await _emailService.SendMailAsync(mailInfo);
                 }
 
                 return createResult.Succeeded && claimResult.Succeeded && roleResult.Succeeded;
@@ -104,7 +140,7 @@ namespace TopCalAPI.Services.Implementation
 
         public async Task<bool> UpdateUser(UpdateUserModel model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId);
+            var user = await _userManager.FindByIdAsync(model.Id);
 
             if (user != null)
             {
@@ -176,15 +212,18 @@ namespace TopCalAPI.Services.Implementation
                     LastName = model.LastName
                 };
 
+                var role = GetRoleName(RoleEnum.Regular);
+
                 var createResult = await _userManager.CreateAsync(user, model.Password);
+                var roleResult = await _userManager.AddToRoleAsync(user, role);
                 var claimResult = await _userManager.AddClaimAsync(user, new Claim("Regular", "True"));
 
-                if (!createResult.Succeeded || !claimResult.Succeeded)
+                if (!createResult.Succeeded || !claimResult.Succeeded || !roleResult.Succeeded)
                 {
                     _errors.AddRange(createResult.Errors.Concat(claimResult.Errors).Select(x => x.Description).ToList());
                 }
 
-                return createResult.Succeeded && claimResult.Succeeded;
+                return createResult.Succeeded && claimResult.Succeeded && roleResult.Succeeded;
             }
 
             _errors.Add("Bad Request: User already exists!");
@@ -192,7 +231,7 @@ namespace TopCalAPI.Services.Implementation
             return false;
         }
 
-        public async Task<string> CreateToken(LoginModel model)
+        public async Task<LoggedUserModel> CreateToken(LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.UserName);
 
@@ -202,13 +241,23 @@ namespace TopCalAPI.Services.Implementation
                 {
                     var userClaims = await _userManager.GetClaimsAsync(user);
 
+                    var roleClaim = userClaims.First();
+
                     var token = GenerateJwtToken(user, userClaims);
 
-                    return token;
+                    var result = new LoggedUserModel
+                    {
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Token = token,
+                        Role =  Enum.Parse<RoleEnum>(roleClaim.Type),
+                    };
+
+                    return result;
                 }
             }
             _errors.Add("Bad Request: Login failed! User is not available!");
-            return string.Empty;
+            return null;
         }
 
         public List<string> GetErrors()

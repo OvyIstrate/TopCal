@@ -24,7 +24,7 @@ namespace TopCal.Test.Services
         [Fact]
         public async Task GetMealById_ReturnsEntry_Success()
         {
-            var result =  await _mealService.GetMealAsync(Guid.NewGuid());
+            var result =  await _mealService.GetMealAsync(Guid.NewGuid().ToString(), Guid.NewGuid());
 
             Assert.NotNull(result);
         }

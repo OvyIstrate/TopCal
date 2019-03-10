@@ -19,9 +19,9 @@ namespace TopCalAPI.ViewModels
         [Required]
         public string LastName { get; set; }
 
-        [Compare("Password")]
+        [Required]
         [DataType(DataType.Password)]
-        public string  ConfirmPassword { get; set; }
+        public string  Confirm { get; set; }
 
     }
 }
