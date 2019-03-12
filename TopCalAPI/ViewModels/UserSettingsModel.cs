@@ -1,17 +1,18 @@
-﻿using TopCal.Data.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TopCalAPI.ViewModels
 {
-    public class LoggedUserModel
+    public class UserSettingsModel
     {
+        public string UserId { get; set; }
+
+        [Required]
         public string FirstName { get; set; }
 
+        [Required]
         public string LastName { get; set; }
 
-        public string Token { get; set; }
-
-        public RoleEnum Role { get; set; }
-
+        [Required]
         public float CaloriesTarget { get; set; }
     }
 }

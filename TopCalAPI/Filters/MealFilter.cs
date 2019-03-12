@@ -16,12 +16,12 @@ namespace TopCalAPI.Filters
 
             if (filterModel.FromDate.HasValue)
             {
-                query = query.Where(x => DateTime.Compare(filterModel.FromDate.Value, x.Date) <= 0);
+                query = query.Where(x => DateTime.Compare(filterModel.FromDate.Value.Date, x.Date.Date) <= 0);
             }
 
             if (filterModel.ToDate.HasValue)
             {
-                query = query.Where(x => DateTime.Compare(filterModel.ToDate.Value, x.Date) >= 0);
+                query = query.Where(x => DateTime.Compare(filterModel.ToDate.Value.Date, x.Date.Date) >= 0);
             }
 
             if (filterModel.FromTime.HasValue)

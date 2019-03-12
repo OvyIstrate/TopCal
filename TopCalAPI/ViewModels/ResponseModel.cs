@@ -1,6 +1,6 @@
 ﻿namespace TopCalAPI.ViewModels
 {
-    public class SuccessResponseModel
+    public class ResponseModel
     {
         public string Message { get; set; }
 

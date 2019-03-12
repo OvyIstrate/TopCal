@@ -158,7 +158,6 @@ namespace TopCalAPI.Services.Implementation
                     await _userManager.RemoveClaimAsync(user, new Claim(currentRole.First(), "True"));
                     await _userManager.AddToRoleAsync(user, role);
                     await _userManager.AddClaimAsync(user, new Claim(role, "True"));
-
                 }
                 
                 var updateResult = await _userManager.UpdateAsync(user);
@@ -166,6 +165,31 @@ namespace TopCalAPI.Services.Implementation
                 if (!updateResult.Succeeded)
                 {
                    _errors.AddRange(updateResult.Errors.Select(x => x.Description).ToList());
+                }
+
+                return updateResult.Succeeded;
+            }
+
+            _errors.Add("Bad Request: User doesn't exist!");
+
+            return false;
+        }
+
+        public async Task<bool> UpdateSettings(UserSettingsModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user != null)
+            {
+                user.CaloriesTarget = model.CaloriesTarget;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+
+                var updateResult = await _userManager.UpdateAsync(user);
+
+                if (!updateResult.Succeeded)
+                {
+                    _errors.AddRange(updateResult.Errors.Select(x => x.Description).ToList());
                 }
 
                 return updateResult.Succeeded;
@@ -251,6 +275,7 @@ namespace TopCalAPI.Services.Implementation
                         LastName = user.LastName,
                         Token = token,
                         Role =  Enum.Parse<RoleEnum>(roleClaim.Type),
+                        CaloriesTarget = user.CaloriesTarget
                     };
 
                     return result;

@@ -55,21 +55,32 @@ namespace TopCalAPI.Controllers
         [Authorize(Policy = "MealManagers")]
         public async Task<ActionResult> Post([FromBody] MealCreateModel model)
         {
+            model.UserId = User.Identity.Name;
+
             await _mealService.AddMealAsync(model);
 
-            return Ok($"The {model.Description} has been added!");
+            var response = new ResponseModel
+            {
+                Message = $"The {model.Description} has been added!"
+            };
+
+            return Ok(response);
         }
 
         // PUT: api/Meal/5
-        [HttpPut("{id}")]
+        [HttpPut]
         [ValidateModel]
         [Authorize(Policy = "MealManagers")]
-        public async Task<ActionResult> Put(Guid id, [FromBody] MealUpdateModel model)
+        public async Task<ActionResult> Put([FromBody] MealUpdateModel model)
         {
-            model.Id = id;
             await _mealService.UpdateMealAsync(model);
 
-            return Ok($"The {model.Id} has been updated");
+            var response = new ResponseModel
+            {
+                Message = $"The meal has been updated"
+            };
+
+            return Ok(response);
         }
 
         // DELETE: api/ApiWithActions/5
@@ -79,7 +90,12 @@ namespace TopCalAPI.Controllers
         {
             await _mealService.DeleteMealAsync(id);
 
-            return Ok($"The {id} meal has been deleted!");
+            var response = new ResponseModel
+            {
+                Message = "The meal has been deleted!"
+            };
+
+            return Ok(response);
         }
     }
 }

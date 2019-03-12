@@ -14,6 +14,8 @@ namespace TopCalAPI.Services.Interfaces
 
         Task<bool> UpdateUser(UpdateUserModel model);
 
+        Task<bool> UpdateSettings(UserSettingsModel model);
+
         Task<bool> DeleteUser(string userId);
 
         Task<bool> Register(RegisterModel model);

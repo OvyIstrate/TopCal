@@ -60,7 +60,7 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(errors.ToList());
                 }
 
-                var response = new SuccessResponseModel
+                var response = new ResponseModel
                 {
                     Message = "You've successfully created an user",
                     Success = true
@@ -90,7 +90,7 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(_userService.GetErrors());
                 }
 
-                var response = new SuccessResponseModel
+                var response = new ResponseModel
                 {
                     Message = "You've successfully deleted the user",
                     Success = true
@@ -120,7 +120,7 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(_userService.GetErrors());
                 }
 
-                var response = new SuccessResponseModel
+                var response = new ResponseModel
                 {
                     Message = "You've successfully updated an user"
                 };
@@ -129,7 +129,37 @@ namespace TopCalAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error when creating an user {ex.Message}");
+                _logger.LogError($"Error when updating an user {ex.Message}");
+            }
+
+            return BadRequest(_userService.GetErrors());
+        }
+
+        [HttpPut("settings")]
+        [ValidateModel]
+        [Authorize]
+        public async Task<ActionResult> UpdateSettings([FromBody] UserSettingsModel model)
+        {
+            try
+            {
+                model.UserId = User.Identity.Name;
+                var result = await _userService.UpdateSettings(model);
+
+                if (!result)
+                {
+                    return OperationFailed(_userService.GetErrors());
+                }
+
+                var response = new ResponseModel
+                {
+                    Message = "You've successfully updated your user settings"
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error when updating user settings {ex.Message}");
             }
 
             return BadRequest(_userService.GetErrors());
@@ -148,7 +178,7 @@ namespace TopCalAPI.Controllers
                     return OperationFailed(_userService.GetErrors());
                 }
 
-                var response = new SuccessResponseModel
+                var response = new ResponseModel
                 {
                     Message = "You've Successfully registered!",
                     Success =  true

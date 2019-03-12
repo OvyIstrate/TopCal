@@ -25,7 +25,7 @@ namespace TopCalAPI.Services.Implementation
 
         public async Task<List<Meal>> GetMealsAsync(string userId, MealFilterModel filterModel)
         {
-            var query = _repository.GetAll<Meal>().Where(x => x.UserId == userId);
+            var query = _repository.GetAll<Meal>().Where(x => x.UserId == userId).OrderBy(x => x.Date);
 
             var result =  await _filter.Filter(filterModel, query).ToListAsync();
 
