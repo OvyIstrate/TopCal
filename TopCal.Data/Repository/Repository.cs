@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using TopCal.Data.Entities;
 
 namespace TopCal.Data.Repository
 {

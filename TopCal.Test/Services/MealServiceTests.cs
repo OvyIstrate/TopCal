@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using TopCal.Data.Entities;
 using TopCal.Data.Repository;
@@ -18,16 +22,11 @@ namespace TopCal.Test.Services
 
         public MealServiceTests()
         {
+            _repository = new Mock<IRepository>();
+            _filter = new Mock<IFilter<Meal, MealFilterModel>>();
             _mealService = new MealService(_repository.Object, _filter.Object);
         }
 
-        [Fact]
-        public async Task GetMealById_ReturnsEntry_Success()
-        {
-            var result =  await _mealService.GetMealAsync(Guid.NewGuid().ToString(), Guid.NewGuid());
-
-            Assert.NotNull(result);
-        }
     }
 }
  
